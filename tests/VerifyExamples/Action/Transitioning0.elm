@@ -17,16 +17,16 @@ import Task
 
 spec0 : Test.Test
 spec0 =
-    Test.test "#transitioning: \n\n    transitioning 42\n    |> Action.config\n    |> Action.withTransition (\\int -> ((int,0),Cmd.none))\n    |> Action.apply\n    |> Tuple.first\n    --> (42,0)" <|
+    Test.test "#transitioning: \n\n    transitioning 42\n    |> Action.config\n    |> Action.withTransition (\\int -> ((int,0),Cmd.none)) Just never\n    |> Action.apply\n    |> Tuple.first\n    --> Just (42,0)" <|
         \() ->
             Expect.equal
                 (
                 transitioning 42
                 |> Action.config
-                |> Action.withTransition (\int -> ((int,0),Cmd.none))
+                |> Action.withTransition (\int -> ((int,0),Cmd.none)) Just never
                 |> Action.apply
                 |> Tuple.first
                 )
                 (
-                (42,0)
+                Just (42,0)
                 )

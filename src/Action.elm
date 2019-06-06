@@ -130,10 +130,10 @@ updating tuple =
 
     transitioning 42
     |> Action.config
-    |> Action.withTransition (\int -> ((int,0),Cmd.none))
+    |> Action.withTransition (\int -> ((int,0),Cmd.none)) Just never
     |> Action.apply
     |> Tuple.first
-    --> (42,0)
+    --> Just (42,0)
 
 Checklist in case of errors:
 
@@ -286,16 +286,19 @@ Checklist in case of errors:
 
 -}
 withTransition :
-    (transitionData -> ( model, Cmd msg ))
+    (transitionData -> ( stateModel2, Cmd stateMsg2 ))
+    -> (stateModel2 -> model)
+    -> (stateMsg2 -> msg)
     -> ActionConfig stateModel stateMsg transitionData2 exitAllowed (Config a b c d)
     -> ActionConfig stateModel stateMsg transitionData2 exitAllowed (Config a b c (transitionData -> ( model, Cmd msg )))
-withTransition a =
+withTransition a mapState mapMsg =
     map
         (\{ exitFun, modelMapper, msgMapper, transitionFun } ->
             { exitFun = exitFun
             , modelMapper = modelMapper
             , msgMapper = msgMapper
-            , transitionFun = a
+            , transitionFun =
+                a >> (\( s, c ) -> ( mapState s, c |> Cmd.map mapMsg ))
             }
         )
 
