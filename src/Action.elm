@@ -304,7 +304,7 @@ Checklist in case of errors:
 
 -}
 withCustomTransition :
-    (transitionData -> ( model, msg ))
+    (transitionData -> ( model, Cmd msg ))
     -> ActionConfig stateModel stateMsg transitionData2 exitAllowed (Config a b c d)
     -> ActionConfig stateModel stateMsg transitionData2 exitAllowed (Config a b c (transitionData -> ( model, Cmd msg )))
 withCustomTransition a =

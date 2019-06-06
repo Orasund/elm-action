@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="bf4e048e-786e-4b92-96f5-2d0b005ab671" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Action.elm" beforeDir="false" afterPath="$PROJECT_DIR$/src/Action.elm" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -57,8 +56,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Action.elm">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="119">
-              <caret line="55" column="70" selection-start-line="55" selection-start-column="70" selection-end-line="55" selection-end-column="70" />
+            <state relative-caret-position="486">
+              <caret line="306" column="36" selection-start-line="306" selection-start-column="36" selection-end-line="306" selection-end-column="36" />
             </state>
           </provider>
         </entry>
@@ -249,8 +248,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Action.elm">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="55" column="70" selection-start-line="55" selection-start-column="70" selection-end-line="55" selection-end-column="70" />
+        <state relative-caret-position="486">
+          <caret line="306" column="36" selection-start-line="306" selection-start-column="36" selection-end-line="306" selection-end-column="36" />
         </state>
       </provider>
     </entry>
