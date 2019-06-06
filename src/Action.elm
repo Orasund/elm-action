@@ -1,6 +1,6 @@
 module Action exposing
     ( Action, updating, transitioning, exiting
-    , config, apply, withUpdate, withTransition, withExit
+    , config, apply, withUpdate, withTransition, withCustomTransition, withExit
     )
 
 {-| There is a quick guideline to follow if you want to use this module:
@@ -53,7 +53,7 @@ module Action exposing
 
 # Config Pipeline
 
-@docs config, apply, withUpdate, withTransition, withExit
+@docs config, apply, withUpdate, withTransition, withCustomTransition, withExit
 
 -}
 
@@ -276,7 +276,7 @@ Lets say we want a user to login.
     type Model
         = Maybe User
 
-Then we can use `withTransition \string -> (Just <| initUser string, Cmd.none)`
+Then we can use `withTransition \string -> ( initUser string, Cmd.none) Just never`
 for logging in a user.
 
 Checklist in case of errors:
@@ -292,13 +292,28 @@ withTransition :
     -> ActionConfig stateModel stateMsg transitionData2 exitAllowed (Config a b c d)
     -> ActionConfig stateModel stateMsg transitionData2 exitAllowed (Config a b c (transitionData -> ( model, Cmd msg )))
 withTransition a mapState mapMsg =
+    withCustomTransition (a >> (\( s, c ) -> ( mapState s, c |> Cmd.map mapMsg )))
+
+
+{-| Specifies a Transition to multiple possible states.
+
+Checklist in case of errors:
+
+  - `transitionData` should not be `Never`
+  - the config pipeline should include `withTransition`
+
+-}
+withCustomTransition :
+    (transitionData -> ( model, msg ))
+    -> ActionConfig stateModel stateMsg transitionData2 exitAllowed (Config a b c d)
+    -> ActionConfig stateModel stateMsg transitionData2 exitAllowed (Config a b c (transitionData -> ( model, Cmd msg )))
+withCustomTransition a =
     map
         (\{ exitFun, modelMapper, msgMapper, transitionFun } ->
             { exitFun = exitFun
             , modelMapper = modelMapper
             , msgMapper = msgMapper
-            , transitionFun =
-                a >> (\( s, c ) -> ( mapState s, c |> Cmd.map mapMsg ))
+            , transitionFun = a
             }
         )
 
