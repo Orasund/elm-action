@@ -3,6 +3,7 @@ This module lets you organize your update function for different states.
 
 For example:
 
+``` elm
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case (msg,model) of
@@ -18,26 +19,29 @@ update msg model =
                 |> Action.withUpdate User UserSpecific
                 |> Action.withExit (Guest,Cmd.none)
                 |> Action.apply
+```
 
 Here we have two states: `Guest` and `User`. Each of them has there own update
 function:
 
-        updateGuest : GuestMsg -> GuestAction
-        updateGuest msg =
-            case msg of
-                LoggedIn {name,pass} ->
-                    if pass = "password" then
-                        Action.transitioning name
-                    else
-                        Action.updating ((),Cmd.none)
+``` elm
+updateGuest : GuestMsg -> GuestAction
+updateGuest msg =
+    case msg of
+        LoggedIn {name,pass} ->
+            if pass = "password" then
+                Action.transitioning name
+            else
+                Action.updating ((),Cmd.none)
 
-        updateUser : UserMsg -> User -> UserAction
-        updateUser msg user =
-            case msg of
-                Commented string ->
-                    Debug.todo "send comment to server"
-                LoggedOut ->
-                    Action.exiting
+updateUser : UserMsg -> User -> UserAction
+updateUser msg user =
+    case msg of
+        Commented string ->
+            Debug.todo "send comment to server"
+        LoggedOut ->
+            Action.exiting
+```
 
 Under the hood, an `Action` is a state transition of a
 [state machine](https://en.wikipedia.org/wiki/Finite-state_machine).
