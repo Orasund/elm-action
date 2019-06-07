@@ -3,33 +3,33 @@ This module lets you organize your update function for different states.
 
 For example:
 
-        update : Msg -> Model -> (Model, Cmd Msg)
-        update msg model =
-            case (msg,model) of
-                (LoggedIn guestMsg,Nothing) ->
-                    updateGuest guestMsg
-                    |> Action.config
-                    |> Action.withTransition
-                        (\name ->
-                          (Just <| initUser name,Cmd.none)
-                        )
-                    |> Action.withUpdate (always Nothing) never
-                    |> Action.apply
-                (UserSpecific userMsg,Just user) ->
-                    updateUser userMsg
-                    |> Action.config
-                    |> Action.withUpdate Just UserSpecific
-                    |> Action.withExit (Nothing,Cmd.none)
+update : Msg -> Model -> (Model, Cmd Msg)
+update msg model =
+    case (msg,model) of
+        (GuestSpecific guestMsg,Guest) ->
+            updateGuest guestMsg
+                |> Action.config
+                |> Action.withTransition initUser User never
+                |> Action.withUpdate (always Guest) never
+                |> Action.apply
+        (UserSpecific userMsg,User userModel) ->
+            updateUser userMsg
+                |> Action.config
+                |> Action.withUpdate User UserSpecific
+                |> Action.withExit (Guest,Cmd.none)
+                |> Action.apply
 
 Here we have two states: `Guest` and `User`. Each of them has there own update
 function:
 
-        updateGuest : {name:String,pass:String} -> GuestAction
-        updateGuest {name,pass} =
-            if pass = "password" then
-                Action.transitioning name
-            else
-                Action.updating ((),Cmd.none)
+        updateGuest : GuestMsg -> GuestAction
+        updateGuest msg =
+            case msg of
+                LoggedIn {name,pass} ->
+                    if pass = "password" then
+                        Action.transitioning name
+                    else
+                        Action.updating ((),Cmd.none)
 
         updateUser : UserMsg -> User -> UserAction
         updateUser msg user =
@@ -49,3 +49,11 @@ The corresponding state machine looks like this:
                    +->Guest-+   ?LoggedIn => pass == "password"?
                        ^    |
                        +----+   !pass /= "password"
+
+# Alternative Solutions
+
+I've seen multiple different approaches for the same problem and it might be that my solution isn't suitable for your needs.
+
+* In the [Elm Spa Example](https://github.com/rtfeldman/elm-spa-example/blob/master/src/Main.elm), a helper function `updateWith` is used for the wiring. Transitions are all defined in the function `changeRouteTo`. Personally I like to model my app as a state machine. But if you don't, then the approach in the SPA example will be better for you.
+* [the-sett/elm-state-machines](https://package.elm-lang.org/packages/the-sett/elm-state-machines/latest/) has the same idea as I do, but implements it using phantom types. Instead of phantom types, I use the config pipeline to specify what actions are allowed.
+* [turboMaCk/glue](https://package.elm-lang.org/packages/turboMaCk/glue/latest/) introduces the concept of subModules. This makes a lot of sense for reusable views. If you only use reusable views, then use that package instead.
